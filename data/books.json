@@ -1,0 +1,12 @@
+strong-bible/
+│
+├── index.html
+├── styles.css
+├── script.js
+├── data/
+│   ├── verses.json
+│   └── topics.json
+└── assets/
+    ├── logo.png
+    └── styles/
+        └── voltemos.css

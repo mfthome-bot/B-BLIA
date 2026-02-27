@@ -1,0 +1,10 @@
+strong-bible/
+│
+├── index.html
+├── styles.css
+├── script.js
+├── data/
+│   ├── verses.json
+│   └── topics.json
+└── images/
+    └── logo.png
