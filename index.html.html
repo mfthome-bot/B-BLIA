@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voltemos à Palavra — Bíblia Strong Interativa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   RESET + VARIÁVEIS
+   ═══════════════════════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ciano:#00B4D8; --ciano-h:#00d4ff; --ciano-l:rgba(0,180,216,.08);
+  --navy:#001529;  --navy-m:#002d4a;  --navy-l:#003d5b;
+  --page:#f0f4f6;  --card:#fff;
+  --txt:#1a2730;   --txt-s:#5a7080;   --border:#dde8ef;
+  --shadow:0 2px 12px rgba(0,21,41,.08);
+  --shadow-lg:0 12px 40px rgba(0,21,41,.18);
+  --r:10px;
+}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--page); color:var(--txt);
+  min-height:100vh; -webkit-font-smoothing:antialiased;
+}
+
+/* ═══ HEADER ═══ */
+.header{
+  background:var(--navy);
+  border-bottom:3px solid var(--ciano);
+  position:sticky; top:0; z-index:100;
+  box-shadow:var(--shadow-lg);
+}
+.header-inner{
+  max-width:1400px; margin:0 auto;
+  padding:14px 28px;
+  display:flex; align-items:center; gap:24px;
+}
+.logo h1{
+  font-family:'Playfair Display',serif;
+  color:var(--ciano); font-size:1.35rem;
+  line-height:1.15; font-weight:700;
+}
+.logo span{
+  display:block; color:rgba(255,255,255,.42);
+  font-size:.7rem; font-weight:500;
+  letter-spacing:.7px; text-transform:uppercase; margin-top:2px;
+}
+.search-wrap{ flex:1; max-width:460px; display:flex; gap:8px; }
+.search-wrap input{
+  flex:1; padding:10px 18px;
+  border:2px solid rgba(255,255,255,.15);
+  border-radius:24px;
+  background:rgba(255,255,255,.07);
+  color:#fff; font-size:.92rem; transition:.2s;
+}
+.search-wrap input::placeholder{ color:rgba(255,255,255,.38); }
+.search-wrap input:focus{
+  outline:none;
+  border-color:var(--ciano);
+  background:rgba(255,255,255,.11);
+}
+.btn-search{
+  padding:10px 20px;
+  background:var(--ciano); color:var(--navy);
+  border:none; border-radius:24px;
+  font-weight:600; font-size:.9rem;
+  cursor:pointer; transition:.2s;
+}
+.btn-search:hover{ background:var(--ciano-h); transform:translateY(-1px); }
+
+/* ═══ LAYOUT ═══ */
+.layout{
+  max-width:1400px; margin:0 auto;
+  padding:22px 28px;
+  display:grid; grid-template-columns:230px 1fr; gap:22px;
+}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{
+  background:var(--card); border-radius:var(--r);
+  box-shadow:var(--shadow); overflow:hidden;
+  position:sticky; top:80px;
+  max-height:calc(100vh - 100px);
+  display:flex; flex-direction:column;
+}
+.sidebar-head{
+  background:var(--navy); color:#fff;
+  padding:13px 16px;
+  font-size:.76rem; font-weight:600;
+  letter-spacing:.7px; text-transform:uppercase;
+}
+.book-list{ list-style:none; overflow-y:auto; flex:1; padding:4px 0; }
+.book-list::-webkit-scrollbar{ width:5px; }
+.book-list::-webkit-scrollbar-thumb{ background:var(--ciano); border-radius:3px; }
+.book-list li{
+  padding:7px 16px; font-size:.87rem;
+  cursor:pointer; color:var(--txt-s);
+  transition:.15s; border-left:3px solid transparent;
+}
+.book-list li:hover{ background:#eef6fa; color:var(--navy); }
+.book-list li.active{
+  background:var(--ciano); color:#fff;
+  font-weight:600; border-left-color:var(--navy);
+}
+
+/* ═══ MAIN ═══ */
+.main{ min-width:0; display:flex; flex-direction:column; gap:14px; }
+
+/* ─── TOOLBAR ─── */
+.toolbar{
+  background:var(--card); border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:11px 20px;
+  display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+}
+/* radio versão */
+.vg{ display:flex; align-items:center; gap:5px; }
+.vg .vg-lbl{
+  font-size:.76rem; font-weight:600;
+  color:var(--navy-l); text-transform:uppercase;
+  letter-spacing:.4px; margin-right:2px;
+}
+.vg input.r{ display:none; }
+.vg label.r{
+  padding:5px 15px; border-radius:18px;
+  font-size:.84rem; font-weight:600;
+  border:2px solid var(--border);
+  color:var(--txt-s); cursor:pointer;
+  background:var(--page); transition:.2s;
+  user-select:none;
+}
+.vg input.r:checked + label.r{
+  border-color:var(--ciano);
+  background:var(--ciano); color:#fff;
+}
+.vg label.r:hover{ border-color:var(--ciano); color:var(--navy); }
+
+.t-sep{ width:1px; height:26px; background:var(--border); }
+
+/* checkbox */
+.toolbar .chk-lbl{
+  display:flex; align-items:center; gap:7px;
+  font-size:.84rem; color:var(--txt-s);
+  cursor:pointer; user-select:none;
+}
+.toolbar .chk-lbl input{ accent-color:var(--ciano); width:16px; height:16px; cursor:pointer; }
+
+/* ─── CHAPTER BAR ─── */
+.chap-bar{
+  background:var(--card); border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:14px 24px;
+  display:flex; align-items:center;
+  justify-content:space-between; gap:12px;
+}
+.chap-bar h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.55rem; color:var(--navy); font-weight:700;
+}
+.chap-bar .sub{ font-size:.78rem; color:var(--txt-s); margin-top:2px; }
+.nav-btns{ display:flex; gap:7px; }
+.nav-btn{
+  padding:6px 17px;
+  border:2px solid var(--ciano); border-radius:20px;
+  background:transparent; color:var(--ciano);
+  font-weight:600; font-size:.84rem;
+  cursor:pointer; transition:.2s;
+}
+.nav-btn:hover{ background:var(--ciano); color:#fff; }
+.cap-sel{
+  padding:6px 13px;
+  border:2px solid var(--ciano); border-radius:20px;
+  font-size:.87rem; color:var(--navy);
+  cursor:pointer; background:var(--card); font-weight:600;
+}
+.cap-sel:focus{ outline:none; }
+
+/* ─── PARALLEL HEADERS ─── */
+.par-heads{
+  display:none;
+  grid-template-columns:1fr 1fr; gap:24px;
+  margin-bottom:6px; padding-bottom:10px;
+  border-bottom:2px solid var(--border);
+}
+.par-heads.show{ display:grid; }
+.par-heads .col-lbl{
+  font-size:.74rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.8px;
+  color:var(--ciano);
+}
+
+/* ═══ VERSÍCULOS ═══ */
+.verses-panel{
+  background:var(--card); border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:26px 30px; min-height:400px;
+}
+.verse-row{
+  display:grid; grid-template-columns:40px 1fr 220px; gap:13px;
+  align-items:start;
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+  animation:fadeUp .3s ease both;
+}
+.verse-row:last-child{ border-bottom:none; }
+@keyframes fadeUp{
+  from{ opacity:0; transform:translateY(5px); }
+  to  { opacity:1; transform:translateY(0);   }
+}
+.v-num{
+  font-weight:700; color:var(--ciano);
+  font-size:.8rem; min-width:22px;
+  text-align:right; padding-top:3px; flex-shrink:0;
+}
+.v-cols{
+  flex:1; display:grid;
+  grid-template-columns:1fr; gap:16px; min-width:0;
+}
+.v-cols.par{ grid-template-columns:1fr 1fr; }
+
+/* bloco lado (texto + refs) */
+.v-side{ display:flex; flex-direction:column; gap:5px; }
+
+.v-text{
+  font-family:'Source Serif 4',Georgia,serif;
+  font-size:1.04rem; line-height:1.82; color:var(--txt);
+}
+
+/* ─── REFERÊNCIAS INLINE ─── */
+.v-refs{ display:flex; flex-wrap:wrap; gap:3px; align-items:center; }
+.v-refs .r-lbl{
+  font-size:.67rem; font-weight:600;
+  color:var(--txt-s); text-transform:uppercase;
+  letter-spacing:.3px; margin-right:2px;
+}
+.ref-pill{
+  font-size:.7rem; color:var(--navy-l);
+  cursor:pointer; padding:2px 8px;
+  border-radius:9px; border:1px solid transparent;
+  transition:.15s; font-family:'Inter',sans-serif;
+}
+.ref-pill:hover{
+  background:var(--ciano-l);
+  border-color:var(--ciano); color:var(--ciano);
+}
+
+/* lateral de referências (retrátil) */
+.v-refs-side{
+  background:linear-gradient(180deg,var(--card),var(--page));
+  border-radius:8px; padding:10px; box-shadow:var(--shadow);
+  min-height:48px; max-height:220px; overflow:auto;
+  display:flex; flex-direction:column; gap:8px;
+}
+.v-refs-side .ref-list{ display:flex; flex-wrap:wrap; gap:6px; }
+.ref-toggle{
+  align-self:flex-end; background:none; border:1px solid var(--border);
+  padding:4px 8px; border-radius:8px; cursor:pointer; font-size:.8rem;
+}
+.v-refs-side.collapsed{ width:42px; padding:6px; overflow:hidden; }
+.v-refs-side.collapsed .ref-list{ display:none; }
+.v-refs-side.collapsed .ref-toggle{ transform:rotate(180deg); }
+ .ref-label{
+   font-size:0.68rem; color:var(--txt-s);
+   text-transform:uppercase; letter-spacing:0.6px; align-self:flex-start;
+}
+
+/* ─── STRONG WORD ─── */
+.sw{
+  color:var(--ciano); cursor:pointer;
+  border-bottom:1.5px dotted var(--ciano);
+  padding:1px 2px; border-radius:3px; transition:.18s;
+}
+.sw:hover{ background:var(--ciano-l); }
+.sw-code{
+  font-size:.63rem; vertical-align:super;
+  color:var(--navy-l); font-weight:600;
+  margin-left:1px; font-family:'Inter',sans-serif;
+}
+.sw-code.hidden{ display:none; }
+
+/* ═══ POPUP STRONG ═══ */
+.overlay{
+  display:none; position:fixed; inset:0;
+  background:rgba(0,21,41,.7);
+  backdrop-filter:blur(4px); z-index:200;
+}
+.popup{
+  display:none; position:fixed;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  background:var(--card); border-radius:16px;
+  width:90%; max-width:540px;
+  max-height:78vh; overflow-y:auto;
+  box-shadow:var(--shadow-lg);
+  border-top:4px solid var(--ciano);
+  z-index:201;
+  animation:popIn .28s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn{
+  from{ opacity:0; transform:translate(-50%,-46%) scale(.96); }
+  to  { opacity:1; transform:translate(-50%,-50%) scale(1);   }
+}
+.pop-top{
+  padding:20px 24px 14px;
+  display:flex; justify-content:space-between;
+  align-items:flex-start;
+  border-bottom:1px solid var(--border);
+}
+.pop-code{
+  font-family:'Playfair Display',serif;
+  font-size:1.4rem; color:var(--navy); font-weight:700;
+  display:flex; align-items:center; gap:10px;
+}
+.badge{
+  font-family:'Inter',sans-serif;
+  font-size:.6rem; padding:3px 10px;
+  border-radius:12px; background:var(--ciano);
+  color:#fff; font-weight:700;
+  text-transform:uppercase; letter-spacing:.5px;
+}
+.pop-close{
+  background:none; border:none;
+  font-size:1.5rem; color:var(--txt-s);
+  cursor:pointer; width:30px; height:30px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  transition:.15s;
+}
+.pop-close:hover{ background:var(--page); color:var(--navy); }
+
+.pop-word{ text-align:center; padding:16px 24px 2px; }
+.pop-word .original{
+  font-family:'Playfair Display',serif;
+  font-size:1.85rem; color:var(--navy); font-weight:600;
+}
+.pop-word .translit{
+  font-style:italic; color:var(--txt-s);
+  font-size:.98rem; margin-top:2px;
+}
+.pop-body{ padding:16px 24px 22px; }
+.def-block{
+  background:var(--page); border-radius:8px;
+  border-left:4px solid var(--ciano);
+  padding:12px 16px; margin-bottom:10px;
+}
+.def-block .lbl{
+  font-size:.67rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.6px;
+  color:var(--ciano); margin-bottom:5px;
+}
+.def-block .val{ font-size:.93rem; line-height:1.6; color:var(--txt); }
+
+/* ═══ LOADING ═══ */
+.loading{ text-align:center; padding:60px 20px; color:var(--txt-s); }
+.spinner{
+  width:36px; height:36px;
+  border:3px solid var(--border);
+  border-top-color:var(--ciano);
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  margin:0 auto 16px;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:880px){
+  .layout{ grid-template-columns:1fr; }
+  .sidebar{ position:static; max-height:180px; flex-direction:row; }
+  .sidebar-head{ writing-mode:vertical-lr; padding:10px; }
+  .book-list{ flex-direction:row; overflow-x:auto; overflow-y:hidden; padding:0 6px; }
+  .book-list li{ white-space:nowrap; border-left:none; border-bottom:3px solid transparent; }
+  .book-list li.active{ border-left:none; border-bottom-color:var(--navy); }
+  .v-cols.par{ grid-template-columns:1fr; }
+  .par-heads{ display:none!important; }
+  .verses-panel{ padding:18px; }
+  .t-sep{ display:none; }
+  .header-inner{ flex-wrap:wrap; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ HEADER ═══════ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <h1>Voltemos à Palavra<span>Bíblia Strong Interativa</span></h1>
+    </div>
+    <div class="search-wrap">
+      <input type="text" id="searchInput"
+             placeholder="Buscar… ex: Gênesis 1 1"
+             onkeypress="if(event.key==='Enter')doSearch()">
+      <button class="btn-search" onclick="doSearch()">🔍 Buscar</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════ LAYOUT ═══════ -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-head">📚 Livros</div>
+    <ul class="book-list" id="bookList"></ul>
+  </aside>
+
+  <!-- MAIN -->
+  <section class="main">
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <!-- versão -->
+      <div class="vg">
+        <span class="vg-lbl">Versão</span>
+        <input type="radio" class="r" name="ver" id="rAlm" value="almeida" checked onchange="render()">
+        <label class="r" for="rAlm">🇧🇷 Almeida</label>
+        <input type="radio" class="r" name="ver" id="rKJV" value="kjv" onchange="render()">
+        <label class="r" for="rKJV">🇬🇧 KJV</label>
+      </div>
+      <div class="t-sep"></div>
+      <!-- paralelo -->
+      <label class="chk-lbl"><input type="checkbox" id="chkPar" onchange="render()"> Vista Paralela</label>
+      <div class="t-sep"></div>
+      <!-- strong -->
+      <label class="chk-lbl"><input type="checkbox" id="chkStr" checked onchange="render()"> Códigos Strong</label>
+      <div class="t-sep"></div>
+      <!-- refs -->
+      <label class="chk-lbl"><input type="checkbox" id="chkRef" checked onchange="render()"> Referências</label>
+    </div>
+
+    <!-- CHAPTER BAR -->
+    <div class="chap-bar">
+      <div>
+        <h2 id="chapTitle">Gênesis 1</h2>
+        <div class="sub" id="chapSub">Tradução de João Ferreira de Almeida</div>
+      </div>
+      <div class="nav-btns">
+        <button class="nav-btn" onclick="navCap(-1)">← Anterior</button>
+        <select class="cap-sel" id="capSel" onchange="onCapSel()"></select>
+        <button class="nav-btn" onclick="navCap(+1)">Próximo →</button>
+      </div>
+    </div>
+
+    <!-- PARALLEL HEADERS -->
+    <div class="par-heads" id="parHeads">
+      <div class="col-lbl">🇧🇷 Almeida Revista</div>
+      <div class="col-lbl">🇬🇧 KJV + Strong</div>
+    </div>
+
+    <!-- VERSÍCULOS -->
+    <div class="verses-panel" id="versesPanel">
+      <div class="loading"><div class="spinner"></div>Carregando dados…</div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════ POPUP STRONG ═══════ -->
+<div class="overlay" id="overlay" onclick="closePopup()"></div>
+<div class="popup"  id="popup">
+  <div class="pop-top">
+    <div class="pop-code">
+      <span id="popCode">H430</span>
+      <span class="badge" id="popBadge">Hebraico</span>
+    </div>
+    <button class="pop-close" onclick="closePopup()">×</button>
+  </div>
+  <div class="pop-word">
+    <div class="original" id="popOrig">—</div>
+    <div class="translit" id="popXlit">—</div>
+  </div>
+  <div class="pop-body">
+    <div class="def-block"><div class="lbl">📖 Definição</div><div class="val" id="popDesc">—</div></div>
+    <div class="def-block"><div class="lbl">🔤 Pronuncia</div><div class="val" id="popPron">—</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPT
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+// ================================================================
+// MAPAS ESTÁTICOS  (gerados dos dados reais)
+// ================================================================
+
+// Inglês → Português (nomes dos livros como existem nos ficheiros)
+var EN_PT = {
+  "Genesis":"Gênesis","Exodus":"Êxodo","Leviticus":"Levítico",
+  "Numbers":"Números","Deuteronomy":"Deuteronômio","Joshua":"Josué",
+  "Judges":"Juízes","Ruth":"Rute",
+  "1 Samuel":"1 Samuel","2 Samuel":"2 Samuel",
+  "1 Kings":"1 Reis","2 Kings":"2 Reis",
+  "1 Chronicles":"1 Crônicas","2 Chronicles":"2 Crônicas",
+  "Ezra":"Esdras","Nehemiah":"Neemias","Esther":"Ester",
+  "Job":"Jó","Psalms":"Salmos","Proverbs":"Provérbios",
+  "Ecclesiastes":"Eclesiastes","Song of Solomon":"Cantares",
+  "Isaiah":"Isaías","Jeremiah":"Jeremias","Lamentations":"Lamentações",
+  "Ezekiel":"Ezequiel","Daniel":"Daniel","Hosea":"Oseias",
+  "Joel":"Joel","Amos":"Amós","Obadiah":"Obadias","Jonah":"Jonas",
+  "Micah":"Miqueias","Nahum":"Naum","Habakkuk":"Habacuque",
+  "Zephaniah":"Sofonias","Haggai":"Ageu","Zechariah":"Zacarias",
+  "Malachi":"Malaquias","Matthew":"Mateus","Mark":"Marcos",
+  "Luke":"Lucas","John":"João","Acts":"Atos","Romans":"Romanos",
+  "1 Corinthians":"1 Coríntios","2 Corinthians":"2 Coríntios",
+  "Galatians":"Gálatas","Ephesians":"Efésios","Philippians":"Filipenses",
+  "Colossians":"Colossenses",
+  "1 Thessalonians":"1 Tessalonicenses","2 Thessalonians":"2 Tessalonicenses",
+  "1 Timothy":"1 Timóteo","2 Timothy":"2 Timóteo",
+  "Titus":"Tito","Philemon":"Filemom","Hebrews":"Hebreus",
+  "James":"Tiago","1 Peter":"1 Pedro","2 Peter":"2 Pedro",
+  "1 John":"1 João","2 John":"2 João","3 John":"3 João",
+  "Jude":"Judas","Revelation":"Apocalipse"
+};
+// inverso
+var PT_EN = {};
+Object.keys(EN_PT).forEach(function(k){ PT_EN[EN_PT[k]]=k; });
+
+// Abreviações das referências cruzadas → nome do livro (inglês)
+var ABBR = {
+  "Gn":"Genesis","Ex":"Exodus","Lv":"Leviticus","Nm":"Numbers","Dt":"Deuteronomy",
+  "Jos":"Joshua","Jz":"Judges","Rt":"Ruth",
+  "1S":"1 Samuel","2S":"2 Samuel","1R":"1 Kings","2R":"2 Kings",
+  "1Cr":"1 Chronicles","2Cr":"2 Chronicles","Esd":"Ezra","Ne":"Nehemiah","Est":"Esther",
+  "Jó":"Job","Jo":"Job",
+  "Sl":"Psalms","Sal":"Psalms","Ps":"Psalms",
+  "Pv":"Proverbs","Pr":"Proverbs",
+  "Ec":"Ecclesiastes","Ct":"Song of Solomon",
+  "Is":"Isaiah","Jr":"Jeremiah","Lm":"Lamentations","Ez":"Ezekiel","Dn":"Daniel",
+  "Os":"Hosea","Jl":"Joel","Am":"Amos","Ab":"Obadiah","Jn":"Jonah",
+  "Mq":"Micah","Mc":"Mark","Na":"Nahum","Hb":"Hebrews","Hc":"Habakkuk",
+  "Sf":"Zephaniah","Ag":"Haggai","Zc":"Zechariah","Ml":"Malachi",
+  "Mt":"Matthew","Lc":"Luke","At":"Acts","Rm":"Romans",
+  "1Co":"1 Corinthians","2Co":"2 Corinthians",
+  "1 Co":"1 Corinthians","2 Co":"2 Corinthians",
+  "Gl":"Galatians","Ef":"Ephesians","Fp":"Philippians","Cl":"Colossians",
+  "1Ts":"1 Thessalonians","2Ts":"2 Thessalonians",
+  "1 Ts":"1 Thessalonians","2 Ts":"2 Thessalonians",
+  "1Tm":"1 Timothy","2Tm":"2 Timothy",
+  "1 Tm":"1 Timothy","2 Tm":"2 Timothy",
+  "Tt":"Titus","Fm":"Philemon","He":"Hebrews","Tg":"James",
+  "1Pe":"1 Peter","2Pe":"2 Peter","1 Pe":"1 Peter","2 Pe":"2 Peter",
+  "1Jo":"1 John","2Jo":"2 John","3Jo":"3 John",
+  "1 Jo":"1 John","2 Jo":"2 John","3 Jo":"3 John",
+  "Jd":"Jude","Ap":"Revelation"
+};
+
+// livro (inglês) → abreviação (para montar chave refs)
+var BOOK_ABBR = {
+  "Genesis":"Gn","Exodus":"Ex","Leviticus":"Lv","Numbers":"Nm","Deuteronomy":"Dt",
+  "Joshua":"Jos","Judges":"Jz","Ruth":"Rt",
+  "1 Samuel":"1S","2 Samuel":"2S","1 Kings":"1R","2 Kings":"2R",
+  "1 Chronicles":"1Cr","2 Chronicles":"2Cr","Ezra":"Esd","Nehemiah":"Ne","Esther":"Est",
+  "Job":"Jo","Psalms":"Sl","Proverbs":"Pv","Ecclesiastes":"Ec","Song of Solomon":"Ct",
+  "Isaiah":"Is","Jeremiah":"Jr","Lamentations":"Lm","Ezekiel":"Ez","Daniel":"Dn",
+  "Hosea":"Os","Joel":"Jl","Amos":"Am","Obadiah":"Ab","Jonah":"Jn",
+  "Micah":"Mq","Nahum":"Na","Habakkuk":"Hc","Zephaniah":"Sf","Haggai":"Ag",
+  "Zechariah":"Zc","Malachi":"Ml",
+  "Matthew":"Mt","Mark":"Mc","Luke":"Lc","John":"Jo","Acts":"At","Romans":"Rm",
+  "1 Corinthians":"1Co","2 Corinthians":"2Co","Galatians":"Gl","Ephesians":"Ef",
+  "Philippians":"Fp","Colossians":"Cl",
+  "1 Thessalonians":"1Ts","2 Thessalonians":"2Ts",
+  "1 Timothy":"1Tm","2 Timothy":"2Tm","Titus":"Tt","Philemon":"Fm",
+  "Hebrews":"He","James":"Tg","1 Peter":"1Pe","2 Peter":"2Pe",
+  "1 John":"1Jo","2 John":"2Jo","3 John":"3Jo","Jude":"Jd","Revelation":"Ap"
+};
+
+// ================================================================
+// STATE
+// ================================================================
+var DB = { alm:null, kjv:null, str:null, refs:null };
+var bookEN  = "Genesis";
+var capNum  = 1;
+var booksEN = [];   // lista ordenada
+
+// ================================================================
+// INIT — carregar os ficheiros JSON
+// ================================================================
+(function(){
+  var needed = 4, done = 0;
+  function check(){ done++; if(done >= needed) boot(); }
+
+  // util: converte arrays CSV-like para mapa { BookName: { chapter: [ {v,t}, ... ] } }
+  function arrayToBookMap(arr){
+    var map = {};
+    if(!arr || !Array.isArray(arr)) return map;
+    arr.forEach(function(row){
+      var book = row[""] || row['Book Name'] || row['Book'] || row['livro'];
+      var cap  = Number(row['__2'] || row['Capitulo'] || row['chapter']);
+      var vers = Number(row['__3'] || row['Versiculo'] || row['verse']);
+      var txt  = row['__4'] || row['Texto'] || row['Text'] || row['texto'] || "";
+      if(!book || isNaN(cap) || isNaN(vers)) return;
+      map[book] = map[book] || {};
+      map[book][cap] = map[book][cap] || [];
+      map[book][cap].push({ v: vers, t: txt });
+    });
+    // ordenar versos
+    Object.keys(map).forEach(function(b){
+      Object.keys(map[b]).forEach(function(c){
+        map[b][c].sort(function(a,b){ return a.v - b.v; });
+      });
+    });
+    return map;
+  }
+
+  function arrayToStrongMap(arr){
+    var m = {};
+    if(!arr || !Array.isArray(arr)) return m;
+    arr.forEach(function(o){
+      var num = (o.number || o.Number || '').toString().trim();
+      if(!num) return;
+      m[num] = {
+        l: o.lemma || o.lemma || o.l || "",
+        x: o.xlit  || o.xlit  || o.x || "",
+        d: o['']    || o.def   || o.desc || "",
+        p: o.pronounce || o.pronounce || o.p || ""
+      };
+    });
+    return m;
+  }
+
+  fetch("data/almeida").then(function(r){return r.json();}).then(function(d){ DB.alm=arrayToBookMap(d); check(); }).catch(function(){ DB.alm=null; check(); });
+  fetch("data/kjv").then(function(r){return r.json();}).then(function(d){ DB.kjv=arrayToBookMap(d); check(); }).catch(function(){ DB.kjv=null; check(); });
+  fetch("data/strong").then(function(r){return r.json();}).then(function(d){ DB.str=arrayToStrongMap(d); check(); }).catch(function(){ DB.str=null; check(); });
+
+  // refs — opcional, mas carregamos também da pasta data
+  fetch("data/referencias").then(function(r){return r.json();}).then(function(d){
+    var refsObj = _indexRefs(d);
+    DB.refs = refsObj.idx || {};
+    DB.refsBack = refsObj.back || {};
+    DB.refsBySuffix = refsObj.suffix || {};
+    check();
+  }).catch(function(){ DB.refs={}; DB.refsBack={}; DB.refsBySuffix={}; check(); });
+
+})();
+
+function _indexRefs(arr){
+  var idx = {};
+  if(!arr || !Array.isArray(arr)) return idx;
+  var back = {};
+  var suffix = {};
+  arr.forEach(function(r){
+    var from = (r["From Verse"] || "").toString().trim();
+    var to   = (r["To Verse"]   || "").toString().trim();
+    if(!from || !to) return;
+
+    // normalize helper — returns normalized key like 'Ps.23.1' and suffix '23.1'
+    function normKeyAndSuffix(str){
+      var first = str.split("-")[0].trim();
+      var m = first.match(/^(\d+\s*)?([A-Za-zÀ-ÿ\.\s]+)[\.\s]*?(\d+)[\.\s](\d+)$/);
+      if(m){
+        var bookPart = m[2].trim();
+        var abbr = bookPart.replace(/\./g,'').replace(/\s+/g,'');
+        return { key: abbr + "." + m[3] + "." + m[4], suffix: m[3] + "." + m[4] };
+      }
+      var fallback = first.replace(/\s+/g,' ').trim().replace(/\s/g,'.');
+      var parts = fallback.split('.');
+      var sfx = parts.slice(-2).join('.');
+      return { key: fallback, suffix: sfx };
+    }
+
+    var fk = normKeyAndSuffix(from);
+    var tk = normKeyAndSuffix(to);
+
+    idx[fk.key] = idx[fk.key] || [];
+    idx[fk.key].push({ to: to, v: r["Votes"] });
+
+    back[tk.key] = back[tk.key] || [];
+    back[tk.key].push({ to: from, v: r["Votes"] });
+
+    // add to suffix index for both sides so we can quickly find refs for a given cap.verse
+    suffix[fk.suffix] = suffix[fk.suffix] || [];
+    suffix[fk.suffix].push({ from: from, to: to, v: r["Votes"] });
+    suffix[tk.suffix] = suffix[tk.suffix] || [];
+    suffix[tk.suffix].push({ from: from, to: to, v: r["Votes"] });
+  });
+  // ordenar por votos desc, limitar 10
+  Object.keys(idx).forEach(function(k){
+    idx[k].sort(function(a,b){ return b.v - a.v; });
+    idx[k] = idx[k].slice(0,10);
+  });
+  Object.keys(back).forEach(function(k){
+    back[k].sort(function(a,b){ return b.v - a.v; });
+    back[k] = back[k].slice(0,10);
+  });
+  Object.keys(suffix).forEach(function(k){
+    suffix[k].sort(function(a,b){ return b.v - a.v; });
+    suffix[k] = suffix[k].slice(0,30); // keep more here
+  });
+  return { idx: idx, back: back, suffix: suffix };
+}
+
+function boot(){
+  if(!DB.alm || !DB.kjv || !DB.str){
+    document.getElementById("versesPanel").innerHTML =
+      '<div class="loading">❌ Erro ao carregar ficheiros.<br><small>Verifica se almeida.json, kjv.json e strong.json estão na mesma pasta.</small></div>';
+    return;
+  }
+  booksEN = Object.keys(DB.kjv);
+  renderBookList();
+  selectBook("Genesis");
+}
+
+// ================================================================
+// SIDEBAR
+// ================================================================
+function renderBookList(){
+  var ul = document.getElementById("bookList");
+  ul.innerHTML = booksEN.map(function(en){
+    return '<li class="'+(en===bookEN?"active":"")+'" onclick="selectBook(\''+en.replace(/'/g,"\\'")+'\')">' + (EN_PT[en]||en) + '</li>';
+  }).join("");
+}
+
+function selectBook(en){
+  bookEN = en;
+  capNum = 1;
+  renderBookList();
+  renderCapSelect();
+  render();
+}
+
+// ================================================================
+// CAPÍTULOS
+// ================================================================
+function getCaps(){
+  var livro = DB.kjv[bookEN] || {};
+  return Object.keys(livro).map(Number).sort(function(a,b){ return a-b; });
+}
+
+function renderCapSelect(){
+  var caps = getCaps();
+  var sel  = document.getElementById("capSel");
+  sel.innerHTML = caps.map(function(c){
+    return '<option value="'+c+'" '+(c===capNum?"selected":"")+'>Capítulo '+c+'</option>';
+  }).join("");
+}
+
+function navCap(dir){
+  var caps = getCaps();
+  var idx  = caps.indexOf(capNum) + dir;
+  if(idx < 0 || idx >= caps.length) return;
+  capNum = caps[idx];
+  document.getElementById("capSel").value = capNum;
+  render();
+}
+function onCapSel(){
+  capNum = Number(document.getElementById("capSel").value);
+  render();
+}
+
+// ================================================================
+// RENDER PRINCIPAL
+// ================================================================
+function render(){
+  var ver     = document.querySelector('input[name=ver]:checked').value;  // "almeida" | "kjv"
+  var par     = document.getElementById("chkPar").checked;
+  var showStr = document.getElementById("chkStr").checked;
+  var showRef = document.getElementById("chkRef").checked;
+
+  var capS     = String(capNum);
+  var kjvArr   = (DB.kjv[bookEN] || {})[capS]  || [];
+  var almLivro = EN_PT[bookEN] || bookEN;
+  var almArr   = (DB.alm[almLivro] || {})[capS] || [];
+
+  // index Almeida por verso
+  var almMap = {};
+  almArr.forEach(function(v){ almMap[v.v] = v.t; });
+
+  // título
+  var titleName = par ? (almLivro + " / " + bookEN)
+                      : (ver === "almeida" ? almLivro : bookEN);
+  document.getElementById("chapTitle").textContent = titleName + " " + capNum;
+
+  // sub
+  var subs = { almeida:"Tradução de João Ferreira de Almeida", kjv:"King James Version · Strong's Numbers" };
+  document.getElementById("chapSub").textContent = par ? "Almeida · KJV + Strong" : subs[ver];
+
+  // parallel headers
+  document.getElementById("parHeads").classList.toggle("show", par);
+
+  // abreviação (candidatos) para refs — tentamos vários códigos (ex: Ps / Sl)
+  var candidates = [];
+  if(BOOK_ABBR[bookEN]) candidates.push(BOOK_ABBR[bookEN]);
+  Object.keys(ABBR).forEach(function(k){ if(ABBR[k]===bookEN) candidates.push(k.replace(/\./g,'').replace(/\s+/g,'')); });
+  candidates.push(bookEN.substring(0,2));
+  // dedupe
+  candidates = candidates.filter(function(v,i,a){ return v && a.indexOf(v)===i; });
+
+  var html = "";
+  kjvArr.forEach(function(vObj, i){
+    var verso   = vObj.v;
+    var kjvText = vObj.t;
+    var almText = almMap[verso] || "";
+
+    var kjvHtml = processStrong(kjvText, showStr);
+    var almHtml = almText || '<em style="color:var(--txt-s)">—</em>';
+
+    // refs (use suffix index for robust matching across abbreviations)
+    var refsSideHtml = "";
+    if(showRef && DB.refsBySuffix){
+      var sKey = String(capNum) + "." + String(verso);
+      var refsA = DB.refsBySuffix[sKey] || [];
+      if(refsA.length){
+        var seen = {};
+        var pills = refsA.map(function(r){
+          var other = r.from && r.from.indexOf(sKey)===-1 ? r.from : r.to;
+          if(!other) other = r.to || r.from;
+          if(seen[other]) return null; seen[other]=true;
+          return '<span class="ref-pill" onclick="navToRef(\''+other+'\')">' + other + '</span>';
+        }).filter(Boolean).join("");
+        if(pills){
+          var refId = 'refs-' + (bookEN||'bk').replace(/[^a-zA-Z0-9]/g,'_') + '-' + capNum + '-' + verso;
+          refsSideHtml = '<div class="v-refs-side collapsed" id="'+refId+'">'
+                       + '<div class="ref-label">Ref</div>'
+                       + '<button class="ref-toggle" onclick="toggleRefs(\''+refId+'\')">☰</button>'
+                       + '<div class="ref-list">' + pills + '</div></div>';
+        }
+      }
+    }
+
+    html += '<div class="verse-row" style="animation-delay:'+(i*0.028)+'s">';
+    html += '<div class="v-num">'+verso+'</div>';
+
+    if(par){
+      // paralelo: Almeida (esq) | KJV (dir) | refs (lado)
+      html += '<div class="v-cols par">';
+      html += '<div class="v-side"><div class="v-text">'+almHtml+'</div></div>';
+      html += '<div class="v-side"><div class="v-text">'+kjvHtml+'</div></div>';
+      html += '</div>';
+      html += refsSideHtml;
+    } else {
+      // modo único: texto central, refs à direita
+      html += '<div class="v-cols">';
+      html += '<div class="v-side">';
+      html += '<div class="v-text">' + (ver==="almeida" ? almHtml : kjvHtml) + '</div>';
+      html += '</div></div>';
+      html += refsSideHtml;
+    }
+
+    html += '</div>';
+  });
+
+  document.getElementById("versesPanel").innerHTML = html;
+}
+
+// ================================================================
+// PROCESSAR STRONG
+// Formatos no ficheiro:  {H1254}  {(H8804)}  — ambos com chaves
+// O regex apanha: código H ou G dentro de {}, {()}, ou apenas ()
+// ================================================================
+function processStrong(text, showCode){
+  if(!text) return "";
+  var cls = showCode ? "sw-code" : "sw-code hidden";
+  // regex explicado:
+  //   \{?\(?   — abre opcionalmente { e/ou (
+  //   ([GH]\d+) — captura o código
+  //   \)?\}?   — fecha opcionalmente ) e/ou }
+  return text.replace(/\{?\(?([GH]\d+)\)?\}?/g, function(match, codigo){
+    return '<span class="sw" onclick="openStrong(\''+codigo+'\')">' +
+           '<span class="'+cls+'">'+codigo+'</span></span>';
+  });
+}
+
+// ================================================================
+// BUSCA (header)
+// ================================================================
+function doSearch(){
+  var q = document.getElementById("searchInput").value.trim();
+  if(!q) return;
+  // aceita: "Gênesis 1 1"  ou  "Genesis 1 1"  ou  "Genesis 1:1"
+  var parts = q.split(/[\s:]+/);
+  if(parts.length < 3){
+    alert("Formato: Livro Capítulo Verso\nExemple: Gênesis 1 1"); return;
+  }
+  var nome = parts[0];
+  // resolver para inglês
+  var en = PT_EN[nome] || nome;
+  // verificar se existe no KJV
+  if(!DB.kjv[en]){
+    // tentar com primeira letra maiúscula
+    en = nome.charAt(0).toUpperCase() + nome.slice(1);
+    if(!DB.kjv[en]){
+      alert("Livro não encontrado: " + nome); return;
+    }
+  }
+  bookEN = en;
+  capNum = Number(parts[1]);
+  renderBookList();
+  renderCapSelect();
+  render();
+}
+
+// ================================================================
+// POPUP STRONG
+// ================================================================
+function openStrong(codigo){
+  var d = DB.str[codigo];
+  if(!d){ alert("Código não encontrado: " + codigo); return; }
+
+  document.getElementById("popCode").textContent  = codigo;
+  document.getElementById("popBadge").textContent = codigo.charAt(0)==="G" ? "Grego" : "Hebraico";
+  document.getElementById("popOrig").textContent  = d.l || "—";
+  document.getElementById("popXlit").textContent  = d.x || "—";
+  document.getElementById("popDesc").textContent  = d.d || "—";
+  document.getElementById("popPron").textContent  = d.p || "—";
+
+  document.getElementById("overlay").style.display = "block";
+  document.getElementById("popup").style.display   = "block";
+}
+
+function closePopup(){
+  document.getElementById("overlay").style.display = "none";
+  document.getElementById("popup").style.display   = "none";
+}
+document.addEventListener("keydown", function(e){ if(e.key==="Escape") closePopup(); });
+
+// toggle refs panel per verse
+function toggleRefs(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.classList.toggle('collapsed');
+}
+
+// ================================================================
+// NAVEGAR PARA REFERÊNCIA
+// Formatos: "Rm.11.36"  "Pv.8.22-Pv.8.30"  "1 Co 8.6"  "2 Pe.3.5"
+// ================================================================
+function navToRef(refStr){
+  // se intervalo, usar só a primeira parte
+  var first = refStr.split("-")[0].trim();
+
+  // tentar match: (número opcional + espaço?) letras separador número separador número
+  var m = first.match(/^(\d+\s*)?([A-Za-zÀ-ÿ]+)\s*[.\s]\s*(\d+)\s*[.\s]\s*(\d+)/);
+  if(!m){ alert("Formato não reconhecido: " + refStr); return; }
+
+  var prefix = (m[1]||"").trim();
+  var abrRaw = prefix ? prefix + " " + m[2] : m[2];
+  var cap    = Number(m[3]);
+
+  // resolver abreviação → livro
+  var livro = ABBR[abrRaw] || ABBR[abrRaw.replace(/\s+/g,"")];
+  if(!livro){ alert("Livro não reconhecido: " + abrRaw); return; }
+
+  closePopup();
+  bookEN = livro;
+  capNum = cap;
+  renderBookList();
+  renderCapSelect();
+  render();
+}
+</script>
+</body>
+</html>
